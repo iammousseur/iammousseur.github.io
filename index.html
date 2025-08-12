@@ -1,82 +1,4 @@
-body {
-background-color: #222;
-    font-family: Arial, sans-serif;
-  }
-
-  .container {
-    max-width: 700px;
-  }
-
-  h4 {
-    font-weight: bold;
-  }
-
-  .btn-round {
-    font-size: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-  }
-
-  /* Стили для прогресс-бара */
-  #progress-container {
-    cursor: pointer;
-  }
-
-  #trackProgress {
-    height: 10px;
-  }
-
-  /* Стили для списка треков */
-  .track-item {
-    cursor: pointer;
-  }
-
-      Название трека
-      Исполнитель
-
-    ⏮️
-    ▶️
-    ⏭️
-
-    Громкость
-
-
-  // Массив треков
-  const tracks = [
-    { title: "Трек 1", artist: "Исполнитель 1", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-    { title: "Трек 2", artist: "Исполнитель 2", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-    { title: "Трек 3", artist: "Исполнитель 3", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
-  ];
-
-  let currentTrackIndex = 0;
-  const audio = document.getElementById('audioPlayer');
-  const playPauseBtn = document.getElementById('playPauseBtn');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const trackTitle = document.getElementById('song-title');
-  const trackArtist = document.getElementById('song-artist');
-  const progressBar = document.getElementById('trackProgress');
-  const trackListElem = document.getElementById('trackList');
-  const volumeRange = document.getElementById('volumeRange');
-
-  // Функция обновления информации о треке
-  function loadTrack(index) {
-    const track = tracks[index];
-    audio.src = track.src;
-    trackTitle.textContent = track.title;
-    trackArtist.textContent = track.artist;
-    // Обновляем выделение выбранного трека
-    Array.from(trackListElem.children).forEach((li, i) => {
-      li.style.backgroundColor = i === index ? '#555' : '';
-    });
-  }
-
-  // Создаем список треков
-  tracks.forEach((track, index) => {
-    const li = document.createElement('li');
-    li.className = 'list-group-item d-flex justify-content-between bg-secondary text-white track-item';
-    li.textContent = track.title + ' - ' + track.artist;
+li.textContent = track.title + ' - ' + track.artist;
     li.onclick = () => {
       currentTrackIndex = index;
       loadTrack(index);
@@ -86,7 +8,6 @@ background-color: #222;
     trackListElem.appendChild(li);
   });
 
-  // Обновление кнопки воспроизведения
   function updatePlayPauseButton() {
     if (audio.paused) {
       playPauseBtn.textContent = '▶️';
@@ -95,16 +16,7 @@ background-color: #222;
     }
   }
 
-  // Переключение трека
-  function playTrack(index) {
-    currentTrackIndex = index;
-    loadTrack(index);
-    audio.play();
-    updatePlayPauseButton();
-  }
-
-  // Обработчики кнопок
- document.getElementById('playPauseBtn').onclick = () => {
+  document.getElementById('playPauseBtn').onclick = () => {
     if (audio.paused) {
       audio.play();
     } else {
@@ -127,18 +39,21 @@ background-color: #222;
     updatePlayPauseButton();
   };
 
-  // Обновление прогресс-бара
+  // Обновление прогресса
   audio.ontimeupdate = () => {
     const progressPercent = (audio.currentTime / audio.duration) * 100;
     progressBar.style.width = progressPercent + '%';
   };
-// Перемотка по клику на прогресс-баре
+
+  // Перемотка по клику
   document.getElementById('progress-container').onclick = (e) => {
     const rect = e.currentTarget.querySelector('.progress').getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const width = rect.width;
-    const seekTime = (clickX / width) * audio.duration;
-    audio.currentTime = seekTime;
+    if (audio.duration) {
+      const seekTime = (clickX / width) * audio.duration;
+      audio.currentTime = seekTime;
+    }
   };
 
   // Громкость
@@ -146,12 +61,16 @@ background-color: #222;
     audio.volume = volumeRange.value;
   };
 
-  // Автоматическая смена трека по окончании
+  // Автозамена трека
   audio.onended = () => {
     currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
     loadTrack(currentTrackIndex);
     audio.play();
   };
-// Загружаем первый трек
-loadTrack(currentTrackIndex);
-updatePlayPauseButton();
+
+  // Изначально загружаем первый трек
+  loadTrack(currentTrackIndex);
+  updatePlayPauseButton();
+</script>
+</body>
+</html>
