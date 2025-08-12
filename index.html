@@ -1,4 +1,124 @@
-li.textContent = track.title + ' - ' + track.artist;
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Фиксированный плеер</title>
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<style>
+  body {
+    background-color: #222;
+    font-family: Arial, sans-serif;
+  }
+
+  .container {
+    max-width: 700px;
+  }
+
+  h4 {
+    font-weight: bold;
+  }
+
+  .btn-round {
+    font-size: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+
+  #progress-container {
+    cursor: pointer;
+  }
+
+  #trackProgress {
+    height: 10px;
+  }
+
+  .track-item {
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="container p-4 my-4 bg-dark text-white rounded">
+  <!-- Обложка и название -->
+  <div class="d-flex align-items-center mb-4">
+    <img src="https://via.placeholder.com/150" alt="Обложка" class="img-thumbnail me-3" style="width: 150px; height: 150px; object-fit: cover; border: 2px solid #fff; border-radius: 8px;">
+    <div>
+      <h4 id="song-title">Название трека</h4>
+      <p id="song-artist" class="mb-0 text-muted">Исполнитель</p>
+    </div>
+  </div>
+
+  <!-- Управление -->
+  <div class="d-flex justify-content-center mb-3">
+    <button id="prevBtn" class="btn btn-outline-light mx-2 btn-round">⏮️</button>
+    <button id="playPauseBtn" class="btn btn-outline-light mx-2 btn-round">▶️</button>
+    <button id="nextBtn" class="btn btn-outline-light mx-2 btn-round">⏭️</button>
+  </div>
+
+  <!-- Таймер / прогресс-бар -->
+  <div id="progress-container" class="mb-4" title="Перемотка">
+    <div class="progress" style="height: 10px;">
+      <div id="trackProgress" class="progress-bar bg-info" style="width: 0%;"></div>
+    </div>
+  </div>
+
+  <!-- Список треков -->
+  <div class="bg-secondary p-2 rounded mb-4" style="max-height: 200px; overflow-y: auto;">
+    <ul class="list-group" id="trackList">
+      <!-- Треки добавим через JS -->
+    </ul>
+  </div>
+
+  <!-- Громкость -->
+  <div class="d-flex align-items-center mb-2">
+    <label for="volumeRange" class="me-2">Громкость</label>
+    <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.5" style="width: 150px;">
+  </div>
+</div>
+
+<!-- Аудио -->
+<audio id="audioPlayer" src=""></audio>
+
+<!-- Скрипт -->
+<script>
+  // Ваш фиксированный список треков
+  const tracks = [
+    { title: "Мой Первый Трек", artist: "Исполнитель 1", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+    { title: "Второй Трек", artist: "Исполнитель 2", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+    { title: "Третий Трек", artist: "Исполнитель 3", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
+  ];
+
+  let currentTrackIndex = 0;
+  const audio = document.getElementById('audioPlayer');
+  const playPauseBtn = document.getElementById('playPauseBtn');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const trackTitle = document.getElementById('song-title');
+  const trackArtist = document.getElementById('song-artist');
+  const progressBar = document.getElementById('trackProgress');
+  const trackListElem = document.getElementById('trackList');
+  const volumeRange = document.getElementById('volumeRange');
+
+  // Загружаем трек по индексу
+  function loadTrack(index) {
+    const track = tracks[index];
+    audio.src = track.src;
+    trackTitle.textContent = track.title;
+    trackArtist.textContent = track.artist;
+
+    // Обновляем выделение
+    Array.from(trackListElem.children).forEach((li, i) => {
+      li.style.backgroundColor = i === index ? '#555' : '';
+    });
+  }
+
+  // Создаем список
+  tracks.forEach((track, index) => {
+    const li = document.createElement('li');
+    li.className = 'list-group-item d-flex justify-content-between bg-secondary text-white track-item';
+    li.textContent = track.title + ' - ' + track.artist;
     li.onclick = () => {
       currentTrackIndex = index;
       loadTrack(index);
